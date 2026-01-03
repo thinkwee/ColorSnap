@@ -2,6 +2,8 @@
 
 Snap colors from text and preview all formats instantly.
 
+You can try it at [thinkwee.top/colorsnap/](https://thinkwee.top/colorsnap/).
+
 ## Features
 
 - **5 Color Formats** - HEX, RGB, RGBA, HSL, HSLA
