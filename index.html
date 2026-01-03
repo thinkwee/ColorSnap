@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorSnap - Snap Colors from Text</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 ColorSnap</h1>
+            <p class="subtitle">Snap colors from text and preview all formats in real-time</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="section-header">
+                    <h2>📝 Input Text</h2>
+                    <button class="clear-btn" id="clearBtn">Clear</button>
+                </div>
+                <div id="textInput" class="text-input-editable" contenteditable="true" data-placeholder="Paste text containing color codes...
+
+Supported formats:
+#FF5733 (HEX)
+#F57 (Short HEX)
+rgb(255, 87, 51) (RGB)
+rgba(255, 87, 51, 1) (RGBA)
+hsl(9, 100%, 60%) (HSL)
+hsla(9, 100%, 60%, 1) (HSLA)
+
+Example:
+Primary: #3498db or rgb(52, 152, 219)
+Secondary: hsl(348, 70%, 53%)
+Background: rgba(236, 240, 241, 0.8)"></div>
+            </div>
+
+            <!-- Color Preview Section -->
+            <div class="output-section">
+                <div class="section-header">
+                    <h2>🎨 Color Preview</h2>
+                    <div class="color-count" id="colorCount">0 colors</div>
+                </div>
+                <div class="colors-container" id="colorsContainer">
+                    <div class="empty-state">
+                        <div class="empty-icon">🎨</div>
+                        <p>No colors yet</p>
+                        <p class="empty-hint">Enter text with color codes on the left</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
