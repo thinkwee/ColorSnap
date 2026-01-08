@@ -11,6 +11,8 @@ You can try it at [thinkwee.top/colorsnap/](https://thinkwee.top/colorsnap/).
 - **Smart Highlighting** - Auto text color based on brightness
 - **One-Click Copy** - Click any format to copy
 - **Auto Scroll** - Click highlighted color to locate card
+- **New Features** - Add harmonies colors
+![Harmonies](harmonies.png)
 
 ## Usage
 

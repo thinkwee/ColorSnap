@@ -182,6 +182,56 @@ function rgbToHsl(r, g, b) {
 /**
  * Create color card with multiple format options
  */
+/**
+ * Convert RGB to Hex
+ */
+function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+}
+
+/**
+ * Generate color harmonies
+ */
+function generateHarmonies(h, s, l) {
+    const harmonies = {
+        complementary: [],
+        analogous: [],
+        triadic: [],
+        tetradic: [],
+        monochromatic: []
+    };
+
+    // Helper to normalize hue
+    const normalizeHue = (hue) => (hue % 360 + 360) % 360;
+    // Helper to clamp percentage
+    const clamp = (val) => Math.max(0, Math.min(100, val));
+
+    // Complementary: 180deg
+    harmonies.complementary.push({ h: normalizeHue(h + 180), s, l });
+
+    // Analogous: -30deg, +30deg
+    harmonies.analogous.push({ h: normalizeHue(h - 30), s, l });
+    harmonies.analogous.push({ h: normalizeHue(h + 30), s, l });
+
+    // Triadic: +120deg, +240deg
+    harmonies.triadic.push({ h: normalizeHue(h + 120), s, l });
+    harmonies.triadic.push({ h: normalizeHue(h + 240), s, l });
+
+    // Tetradic (Square): +90, +180, +270
+    harmonies.tetradic.push({ h: normalizeHue(h + 90), s, l });
+    harmonies.tetradic.push({ h: normalizeHue(h + 180), s, l });
+    harmonies.tetradic.push({ h: normalizeHue(h + 270), s, l });
+
+    // Monochromatic: Variations in lightness
+    harmonies.monochromatic.push({ h, s, l: clamp(l + 20) });
+    harmonies.monochromatic.push({ h, s, l: clamp(l - 20) });
+
+    return harmonies;
+}
+
+/**
+ * Create color card with multiple format options
+ */
 function createColorCard(hexColor) {
     const rgb = hexToRgb(hexColor);
     const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
@@ -233,6 +283,12 @@ function createColorCard(hexColor) {
                 <span class="format-value">${hsl.h}°, ${hsl.s}%, ${hsl.l}%, 1</span>
                 <span class="copy-icon">📋</span>
             </div>
+            
+            <button class="toggle-harmonies-btn">🎨 View Harmonies</button>
+            
+            <div class="harmonies-container hidden">
+                <!-- Harmonies will be injected here -->
+            </div>
         </div>
     `;
 
@@ -246,7 +302,78 @@ function createColorCard(hexColor) {
         });
     });
 
+    // Add handler for harmonies button
+    const harmoniesBtn = card.querySelector('.toggle-harmonies-btn');
+    const harmoniesContainer = card.querySelector('.harmonies-container');
+
+    harmoniesBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = harmoniesContainer.classList.contains('hidden');
+
+        if (isHidden) {
+            // Generate and show harmonies if not already generated
+            if (harmoniesContainer.children.length === 0) {
+                // Clear any comment nodes or whitespace
+                harmoniesContainer.innerHTML = '';
+                const harmonies = generateHarmonies(hsl.h, hsl.s, hsl.l);
+                renderHarmonies(harmoniesContainer, harmonies);
+            }
+            harmoniesContainer.classList.remove('hidden');
+            harmoniesBtn.textContent = '🎨 Hide Harmonies';
+            harmoniesBtn.classList.add('active');
+        } else {
+            harmoniesContainer.classList.add('hidden');
+            harmoniesBtn.textContent = '🎨 View Harmonies';
+            harmoniesBtn.classList.remove('active');
+        }
+    });
+
     return card;
+}
+
+/**
+ * Render harmonies into the container
+ */
+function renderHarmonies(container, harmonies) {
+    const createHarmonyRow = (title, colors) => {
+        const row = document.createElement('div');
+        row.className = 'harmony-row';
+
+        const titleEl = document.createElement('div');
+        titleEl.className = 'harmony-title';
+        titleEl.textContent = title;
+        row.appendChild(titleEl);
+
+        const swatches = document.createElement('div');
+        swatches.className = 'harmony-swatches';
+
+        colors.forEach(color => {
+            const rgb = hslToRgb(color.h, color.s, color.l);
+            const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+
+            const swatch = document.createElement('div');
+            swatch.className = 'harmony-swatch';
+            swatch.style.backgroundColor = hex;
+            swatch.title = hex;
+            swatch.setAttribute('data-color', hex);
+
+            swatch.addEventListener('click', (e) => {
+                e.stopPropagation();
+                copyToClipboard(hex, swatch);
+            });
+
+            swatches.appendChild(swatch);
+        });
+
+        row.appendChild(swatches);
+        return row;
+    };
+
+    container.appendChild(createHarmonyRow('Complementary', harmonies.complementary));
+    container.appendChild(createHarmonyRow('Analogous', harmonies.analogous));
+    container.appendChild(createHarmonyRow('Triadic', harmonies.triadic));
+    container.appendChild(createHarmonyRow('Tetradic', harmonies.tetradic));
+    container.appendChild(createHarmonyRow('Monochromatic', harmonies.monochromatic));
 }
 
 /**
